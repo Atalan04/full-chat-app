@@ -2,8 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Avatar } from "@/components/Avatar";
 import { ApiError, api } from "@/lib/api";
 import { clearSession, getToken, getUser, saveSession } from "@/lib/auth";
+import { displayName } from "@/lib/userDisplay";
 import type { UserProfile } from "@/lib/types";
 
 export default function ChatPage() {
@@ -53,9 +56,16 @@ export default function ChatPage() {
             <p className="text-sm font-medium text-indigo-600">Chat App</p>
             <h1 className="mt-3 text-2xl font-semibold tracking-tight text-gray-950">You’re signed in</h1>
             <p className="mt-2 text-sm text-gray-600">
-              {user ? `Logged in as @${user.username}.` : "Checking your session…"}
+              {user ? `Logged in as ${displayName(user)} (@${user.username}).` : "Checking your session…"}
             </p>
           </div>
+          {user && <Avatar user={user} />}
+          <Link
+            className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            href="/profile"
+          >
+            Profile
+          </Link>
           <button
             className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
             onClick={handleLogout}

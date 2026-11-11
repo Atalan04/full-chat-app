@@ -10,6 +10,13 @@ Append-only. One entry per finished feature, newest at the top. Format:
 
 ---
 
+## 2026-11-11 — F2 Profile
+- Added validated profile editing through `PATCH /api/me`, a signed-in `/profile`
+  page, and shared display-name and deterministic initials-avatar helpers.
+- Verified server type-check, client production build, trimmed profile updates,
+  persistence after reloading from the API, and server rejection of over-long fields.
+- No deviations from the feature spec.
+
 ## 2026-11-11 — F1 Auth
 - Added bcrypt signup/login, seven-day JWTs, active-account auth middleware,
   and protected `GET /api/me`; added client auth pages, API/session helpers,

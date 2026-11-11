@@ -1,28 +1,31 @@
 # current-task — The Single Active Task
 
-**Task:** F2 — Profile
+**Task:** F3 — Find people & conversations
 **Status:** not started
-**Spec:** see `features.md` → F2. Read `architecture.md` API contract before starting.
+**Spec:** see `features.md` → F3. Read `architecture.md` API contract before starting.
 
 ## Scope
 
-- Server: `PATCH /api/me` for `first_name`, `last_name`, and `bio`, with
-  server-side validation; `GET /api/me` was shipped in F1.
-- Client: `/profile` page to view and edit the profile with save feedback;
-  `Avatar` uses initials and a deterministic username-based color. Display name
-  uses the first and last name when set, otherwise the username.
+- Server: `GET /api/users?q=` (username prefix search, maximum 10, excluding
+  the caller and deleted users), `POST /api/conversations` (get or create by
+  username), and `GET /api/conversations` (peer profile and last message, newest
+  activity first).
+- Client: `/chat` layout with a user search box, results that open a
+  conversation, a conversation list with peer avatar/name and last-message
+  preview, and an empty selected-conversation pane for F4.
 
 ## Out of scope
 
-People search, conversations, messaging, and account deletion are later features.
+Realtime messaging and message history are F4. Account deletion is F5.
 
 ## Checklist (verify before marking done)
 
-- [ ] Profile edits survive reload.
-- [ ] Over-long fields are rejected with the server's message.
-- [ ] Avatar initials and color are consistent wherever a user appears.
+- [ ] Searching for a username and picking a result opens a conversation.
+- [ ] Opening the same person twice reuses one conversation.
+- [ ] The sidebar lists the conversation.
+- [ ] A second account sees it once a message exists (F4 completes this).
 - [ ] Server type-check and client build pass.
 
 ## On completion
 
-Append an entry to `done.md`, load F3 into this file, and commit.
+Append an entry to `done.md`, load F4 into this file, and commit.
