@@ -1,31 +1,28 @@
 # current-task — The Single Active Task
 
-**Task:** F1 — Auth
+**Task:** F2 — Profile
 **Status:** not started
-**Spec:** see `features.md` → F1. Read `architecture.md` API contract before starting.
+**Spec:** see `features.md` → F2. Read `architecture.md` API contract before starting.
 
 ## Scope
 
-- Server: `POST /api/auth/signup`, `POST /api/auth/login` (bcrypt, JWT 7-day
-  expiry), `requireAuth` middleware (valid JWT and active user), and protected
-  `GET /api/me` returning the caller's `UserProfile`.
-- Client: `/signup` and `/login` pages with inline errors; store token and user
-  in localStorage; API fetch wrapper attaches the bearer token; root redirects
-  to `/chat` when signed in and `/login` otherwise; logout clears storage.
+- Server: `PATCH /api/me` for `first_name`, `last_name`, and `bio`, with
+  server-side validation; `GET /api/me` was shipped in F1.
+- Client: `/profile` page to view and edit the profile with save feedback;
+  `Avatar` uses initials and a deterministic username-based color. Display name
+  uses the first and last name when set, otherwise the username.
 
 ## Out of scope
 
-Profile editing, people search, conversations, messaging, and account deletion
-are later features.
+People search, conversations, messaging, and account deletion are later features.
 
 ## Checklist (verify before marking done)
 
-- [ ] Sign up, log out, and log back in from the browser.
-- [ ] Duplicate username and wrong password show friendly errors.
-- [ ] `GET /api/me` returns 401 without a token and the profile with a token.
-- [ ] Reload keeps the user logged in.
+- [ ] Profile edits survive reload.
+- [ ] Over-long fields are rejected with the server's message.
+- [ ] Avatar initials and color are consistent wherever a user appears.
 - [ ] Server type-check and client build pass.
 
 ## On completion
 
-Append an entry to `done.md`, load F2 into this file, and commit.
+Append an entry to `done.md`, load F3 into this file, and commit.

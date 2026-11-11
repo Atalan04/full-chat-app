@@ -35,18 +35,19 @@ pro/
 ├── CLAUDE.md
 ├── docs/
 ├── client/
-│   ├── src/app/
-│   │   ├── page.tsx           # redirect: token → /chat, else /login
-│   │   ├── login/page.tsx
-│   │   ├── signup/page.tsx
-│   │   ├── profile/page.tsx   # edit profile + danger zone (delete account)
-│   │   └── chat/page.tsx      # sidebar (search + conversations) + message pane
-│   ├── components/            # Avatar, MessageList, Sidebar, ...
-│   ├── lib/
-│   │   ├── api.ts             # fetch wrapper: base URL, auth header, error handling
-│   │   ├── auth.ts            # token/user persistence (localStorage)
-│   │   ├── socket.ts          # Socket.IO client singleton
-│   │   └── types.ts           # mirror of §API contract
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── page.tsx           # redirect: token → /chat, else /login
+│   │   │   ├── login/page.tsx
+│   │   │   ├── signup/page.tsx
+│   │   │   ├── profile/page.tsx   # edit profile + danger zone (delete account)
+│   │   │   └── chat/page.tsx      # signed-in landing; later gains sidebar + messages
+│   │   ├── components/            # AuthForm, Avatar, MessageList, Sidebar, ...
+│   │   └── lib/
+│   │       ├── api.ts             # fetch wrapper: base URL, auth header, error handling
+│   │       ├── auth.ts            # token/user persistence (localStorage)
+│   │       ├── socket.ts          # Socket.IO client singleton
+│   │       └── types.ts           # mirror of §API contract
 │   └── .env.local
 └── server/
     ├── src/

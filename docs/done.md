@@ -10,6 +10,15 @@ Append-only. One entry per finished feature, newest at the top. Format:
 
 ---
 
+## 2026-11-11 — F1 Auth
+- Added bcrypt signup/login, seven-day JWTs, active-account auth middleware,
+  and protected `GET /api/me`; added client auth pages, API/session helpers,
+  root redirects, and logout.
+- Verified server type-check, client production build, signup, duplicate
+  rejection, wrong-password rejection, token-protected profile access, and login.
+- The browser-control runtime could not start in this sandbox, so clicking
+  through the UI, reload persistence, and logout were not manually observed.
+
 ## 2026-11-11 — F0 Scaffolding
 - Added the Next.js client, strict TypeScript Express server, SQLite schema,
   health endpoint, environment examples, ignore rules, and root run instructions.
