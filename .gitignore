@@ -1,0 +1,10 @@
+node_modules/
+.npm-cache/
+.next/
+dist/
+coverage/
+server/chat.db*
+.env
+.env.*
+!.env.example
+client/.env.local
