@@ -1,30 +1,29 @@
 # current-task — The Single Active Task
 
-**Task:** F5 — Delete account
+**Task:** F6 — Polish
 **Status:** ready
-**Spec:** see `features.md` → F5 and `architecture.md` API contract.
+**Spec:** see `features.md` → F6.
 
 ## Scope
 
-- Server: `DELETE /api/me` requiring password confirmation; atomically
-  anonymize the user, clear profile/password fields, set `deleted_at`, then
-  disconnect that user's sockets. Reject messages to a deleted peer.
-- Client: add a password-confirmation danger zone to `/profile`; clear the
-  session and redirect after deletion; show deleted peers as “Deleted User”
-  and disable message sending.
+- Add auto-scroll only when a user is already at the bottom of the message pane.
+- Make empty and loading states clear across conversations, messages, and search.
+- Show connection status; keep failed sends visible and actionable.
+- Polish Tailwind styling and verify the layout at 375px wide.
 
 ## Out of scope
 
-Empty states, connection status, auto-scroll, and responsive polish are F6.
+Typing indicators, presence, unread badges, history pagination, avatar uploads,
+blocking, rate limiting, group chats, and httpOnly-cookie auth remain later work.
 
 ## Checklist (verify before marking done)
 
-- [ ] Deleted account cannot log in; its existing JWT receives 401.
-- [ ] Peer retains full history, sees “Deleted User”, and cannot message the account.
-- [ ] Database retains no deleted user's original profile or password data.
+- [ ] Empty/loading states work for no conversations, messages, and search results.
+- [ ] Auto-scroll occurs only when already at the bottom.
+- [ ] Disconnect status appears when the server stops; reconnect recovers state.
+- [ ] Layout is usable at 375px with no layout jumps or unstyled flashes.
 - [ ] Server type-check and client build pass.
 
-## F4 completion
+## F5 completion
 
-F4 implementation is complete and verified. See `done.md`; commit the feature
-before starting F5.
+F5 is complete and verified in commit `981ec50`; F6 is ready.

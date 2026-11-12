@@ -10,6 +10,21 @@ Append-only. One entry per finished feature, newest at the top. Format:
 
 ---
 
+## 2026-11-12 — F5 Delete account
+- Added password-confirmed account deletion that atomically anonymizes the
+  account, clears profile/password fields, and disconnects its active sockets.
+- Added the profile danger-zone confirmation dialog and made deleted-peer
+  conversations readable but non-sendable.
+- Prevented locale-dependent message times from differing during hydration by
+  rendering a stable UTC time first and switching to local time after mount.
+- Verified server type-check and client production build; wrong-password
+  rejection, account deletion, JWT/login invalidation, socket disconnect,
+  retained peer history, deleted-peer send rejection, and DB anonymization all
+  passed. Temporary test accounts and conversation were removed.
+- Chrome control could not start in this sandbox, so the profile dialog was
+  not click-tested and the hydration fix was not inspected in the browser.
+- No deviations from the feature contract.
+
 ## 2026-11-12 — F4 Realtime messaging
 - Added JWT-authenticated Socket.IO connections, personal user rooms, validated
   message persistence and delivery, and participant-only history limited to the

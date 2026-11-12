@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Avatar } from "@/components/Avatar";
 import { ApiError, api } from "@/lib/api";
 import { clearSession, getToken, getUser, saveSession } from "@/lib/auth";
+import { disconnectSocket } from "@/lib/socket";
 import { displayName } from "@/lib/userDisplay";
 import type { UserProfile } from "@/lib/types";
 
@@ -19,6 +20,10 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  const [deletePassword, setDeletePassword] = useState("");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   useEffect(() => {
     const token = getToken();
@@ -92,6 +97,22 @@ export default function ProfilePage() {
     }
   }
 
+  async function handleDeleteAccount(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setDeleting(true);
+    setDeleteError(null);
+    try {
+      await api.deleteAccount(deletePassword);
+      disconnectSocket();
+      clearSession();
+      router.replace("/login");
+    } catch (caughtError: unknown) {
+      setDeleteError(caughtError instanceof Error ? caughtError.message : "Could not delete your account.");
+    } finally {
+      setDeleting(false);
+    }
+  }
+
   return (
     <main className="min-h-screen bg-gray-50 px-4 py-10 sm:py-16">
       <section className="mx-auto w-full max-w-2xl rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
@@ -156,6 +177,51 @@ export default function ProfilePage() {
               {saving ? "Saving…" : "Save profile"}
             </button>
           </form>
+        )}
+
+        {!loading && user && (
+          <section className="mt-12 rounded-xl border border-red-200 bg-red-50/60 p-5" aria-labelledby="delete-account-heading">
+            <h2 id="delete-account-heading" className="font-semibold text-red-900">Delete account</h2>
+            <p className="mt-2 text-sm leading-6 text-red-800">
+              Your profile will be anonymized and you will be signed out. Your messages will remain visible to the people you chatted with.
+            </p>
+            <button
+              className="mt-4 rounded-lg border border-red-300 px-4 py-2.5 text-sm font-semibold text-red-800 hover:bg-red-100"
+              onClick={() => { setDeleteError(null); setDeleteDialogOpen(true); }}
+              type="button"
+            >
+              Delete account…
+            </button>
+            {deleteDialogOpen && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" role="presentation">
+                <section aria-labelledby="confirm-delete-heading" aria-modal="true" className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl" role="dialog">
+                  <h3 className="text-lg font-semibold text-gray-950" id="confirm-delete-heading">Permanently delete your account?</h3>
+                  <p className="mt-2 text-sm leading-6 text-gray-600">This cannot be undone. Enter your password to confirm. Your messages will remain for your conversation partners.</p>
+                  <form className="mt-5 space-y-4" onSubmit={(event) => { void handleDeleteAccount(event); }}>
+                    <label className="block text-sm font-medium text-gray-800" htmlFor="delete-password">
+                      Password
+                      <input
+                        autoComplete="current-password"
+                        className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-950 outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100"
+                        id="delete-password"
+                        onChange={(event) => setDeletePassword(event.target.value)}
+                        required
+                        type="password"
+                        value={deletePassword}
+                      />
+                    </label>
+                    {deleteError && <p className="text-sm text-red-700" role="alert">{deleteError}</p>}
+                    <div className="flex justify-end gap-3">
+                      <button className="rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100" onClick={() => { setDeleteDialogOpen(false); setDeletePassword(""); setDeleteError(null); }} type="button">Cancel</button>
+                      <button className="rounded-lg bg-red-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-red-800 disabled:cursor-not-allowed disabled:opacity-60" disabled={deleting || !deletePassword} type="submit">
+                        {deleting ? "Deleting…" : "Confirm deletion"}
+                      </button>
+                    </div>
+                  </form>
+                </section>
+              </div>
+            )}
+          </section>
         )}
       </section>
     </main>

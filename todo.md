@@ -25,21 +25,24 @@ There is no root `npm run dev` script.
   creator-only visibility for empty conversations.
 - F4: authenticated Socket.IO messaging, persisted messages and protected
   latest-50 history, live chat UI, sidebar updates, and reconnect recovery.
+- F5: password-confirmed account deletion, database anonymization, socket
+  disconnect, profile confirmation dialog, and read-only deleted-peer chats.
 
 See `docs/done.md` for verification notes and `docs/architecture.md` for the
-API contract. F4 checks passed: server type-check, client production build,
-two-account live delivery, token rejection, participant authorization, latest
-50 ordering, sidebar visibility, and history persistence after server restart.
-Temporary integration-test accounts were deleted.
+API contract. F4 and F5 server type-checks and client production builds passed.
+Realtime delivery/history and account deletion security flows passed API/socket
+integration checks; temporary integration-test records were removed. The
+hydration timestamp now has a deterministic first render and switches to local
+time after mount; Chrome was unavailable for visual console verification.
 
 ## Next
 
-F5 — Delete account. Scope and acceptance checklist are in
+F6 — Polish. Scope and acceptance checklist are in
 `docs/current-task.md` and `docs/features.md`.
 
 ## Git
 
 - Remote: `https://github.com/Atalan04/full-chat-app.git`
 - Branch: `main`
-- F0–F3 are in the repository history; F4 (`a8f6e4b`) is committed locally.
-- Push F4 only when requested.
+- F0–F4 are pushed to `origin/main`; F4 is `6ac0a61`.
+- F5 (`981ec50`) is committed locally and pending the requested push.

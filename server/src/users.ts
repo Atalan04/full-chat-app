@@ -1,6 +1,8 @@
+import bcrypt from "bcryptjs";
 import { Router } from "express";
 import { requireAuth } from "./auth.js";
 import { db } from "./db.js";
+import { disconnectUserSockets } from "./sockets.js";
 
 interface UserProfileRow {
   id: number;
@@ -9,6 +11,11 @@ interface UserProfileRow {
   last_name: string;
   bio: string;
   deleted_at: string | null;
+}
+
+interface AccountForDeletionRow {
+  id: number;
+  password_hash: string;
 }
 
 const findUserProfile = db.prepare(
@@ -24,8 +31,24 @@ const searchActiveUsers = db.prepare(
    LIMIT 10`,
 );
 
+const findAccountForDeletion = db.prepare(
+  "SELECT id, password_hash FROM users WHERE id = ? AND deleted_at IS NULL",
+);
+const anonymizeAccount = db.transaction((userId: number) => {
+  db.prepare(
+    `UPDATE users
+     SET username = ?, first_name = '', last_name = '', bio = '',
+         password_hash = '', deleted_at = datetime('now')
+     WHERE id = ? AND deleted_at IS NULL`,
+  ).run(`deleted#${userId}`, userId);
+});
+
 function getUserProfile(userId: number): UserProfileRow | undefined {
   return findUserProfile.get(userId) as UserProfileRow | undefined;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 export const usersRouter = Router();
@@ -111,6 +134,30 @@ usersRouter.patch("/me", requireAuth, (request, response) => {
     bio: updatedUser.bio,
     deleted: updatedUser.deleted_at !== null,
   });
+});
+
+usersRouter.delete("/me", requireAuth, async (request, response) => {
+  if (request.userId === undefined) {
+    return response.status(401).json({ error: "Not authenticated." });
+  }
+
+  const body: unknown = request.body;
+  if (!isRecord(body) || typeof body.password !== "string" || !body.password) {
+    return response.status(400).json({ error: "Your password is required to delete the account." });
+  }
+
+  const account = findAccountForDeletion.get(request.userId) as AccountForDeletionRow | undefined;
+  if (!account) {
+    return response.status(401).json({ error: "Not authenticated." });
+  }
+  const password = body.password;
+  if (!(await bcrypt.compare(password, account.password_hash))) {
+    return response.status(401).json({ error: "The password is incorrect." });
+  }
+
+  anonymizeAccount(account.id);
+  disconnectUserSockets(account.id);
+  return response.status(204).end();
 });
 
 usersRouter.get("/users", requireAuth, (request, response) => {

@@ -65,6 +65,13 @@ export const api = {
     });
   },
 
+  deleteAccount(password: string): Promise<void> {
+    return request<void>("/api/me", {
+      method: "DELETE",
+      body: JSON.stringify({ password }),
+    });
+  },
+
   searchUsers(query: string): Promise<UserProfile[]> {
     return request<UserProfile[]>(`/api/users?q=${encodeURIComponent(query)}`);
   },

@@ -2,6 +2,12 @@ import jwt, { type JwtPayload } from "jsonwebtoken";
 import type { ChatSocketServer, Message, MessageSendResult } from "./types.js";
 import { db } from "./db.js";
 
+let socketServer: ChatSocketServer | null = null;
+
+export function disconnectUserSockets(userId: number): void {
+  socketServer?.in(`user:${userId}`).disconnectSockets(true);
+}
+
 interface ConversationPeerRow {
   user_a: number;
   user_b: number;
@@ -33,6 +39,7 @@ function sendFailure(acknowledge: (result: MessageSendResult) => void, error: st
 }
 
 export function configureSockets(io: ChatSocketServer): void {
+  socketServer = io;
   io.use((socket, next) => {
     const token: unknown = socket.handshake.auth?.token;
     const secret = process.env.JWT_SECRET;

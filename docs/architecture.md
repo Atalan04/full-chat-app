@@ -195,7 +195,7 @@ useless even before it expires).
 | `POST /api/auth/login` | `{username, password}` | `200 {token, user: UserProfile}` | 400 missing, 401 bad credentials (never reveals which field) |
 | `GET /api/me` 🔒 | — | `200 UserProfile` | |
 | `PATCH /api/me` 🔒 | any of `{first_name, last_name, bio}` | `200 UserProfile` | 400 validation |
-| `DELETE /api/me` 🔒 | `{password}` | `204` | 401 wrong password |
+| `DELETE /api/me` 🔒 | `{password}` | `204` | 400 missing password, 401 wrong password |
 | `GET /api/users?q=` 🔒 | — | `200 UserProfile[]` — literal username prefix match, ≤ 10, excludes self + deleted | 400 empty q |
 | `POST /api/conversations` 🔒 | `{username}` | `200 ConversationSummary` (existing) or `201` (created) | 404 no active user, 409 user deleted, 400 self |
 | `GET /api/conversations` 🔒 | — | `200 ConversationSummary[]`, last activity first; empty chats only for their creator | |
