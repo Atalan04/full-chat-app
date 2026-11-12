@@ -33,6 +33,7 @@ Adding any other dependency requires a row in these tables (same commit).
 | Run client (dev) | `npm run dev --prefix client` → http://localhost:3000 |
 | Type-check server | `cd server && npx tsc --noEmit` |
 | Build client (includes type-check) | `npm run build --prefix client` |
+| Lint client source | `npm run lint --prefix client` |
 | Reset all data | stop server, delete `server/chat.db*`, restart |
 
 ## Environment variables

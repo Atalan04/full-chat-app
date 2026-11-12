@@ -10,6 +10,16 @@ Append-only. One entry per finished feature, newest at the top. Format:
 
 ---
 
+## 2026-11-12 — F6 Polish
+- Added bottom-aware auto-scroll, connection/reconnect status, disabled sending
+  while offline, and recoverable conversation/history loading errors.
+- Clarified search progress and no-result feedback, improved empty states, and
+  constrained the stacked mobile layout while keeping the desktop split view.
+- Verified server type-check, client production build, source lint, and
+  `git diff --check`.
+- Chrome control could not start in this sandbox, so the 375px visual pass and
+  live disconnected/reconnect UI were not manually observed.
+
 ## 2026-11-12 — F5 Delete account
 - Added password-confirmed account deletion that atomically anonymizes the
   account, clears profile/password fields, and disconnects its active sockets.
