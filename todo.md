@@ -50,4 +50,4 @@ F0–F6 are complete. Promote a “Later” idea to a numbered feature in
 - Branch: `main`
 - F0–F4 are pushed to `origin/main`; F4 is `6ac0a61`.
 - F5 (`87838b3`) is pushed to `origin/main`.
-- F6 is being finalized locally for the requested push.
+- F6 (`6611c31`) is pushed to `origin/main`.
