@@ -1,7 +1,7 @@
 import { getToken } from "@/lib/auth";
-import type { ApiErrorResponse, AuthResponse, ConversationSummary, UserProfile } from "@/lib/types";
+import type { ApiErrorResponse, AuthResponse, ConversationSummary, Message, UserProfile } from "@/lib/types";
 
-const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000").replace(/\/$/, "");
+export const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000").replace(/\/$/, "");
 
 export class ApiError extends Error {
   constructor(message: string, readonly status: number) {
@@ -71,6 +71,10 @@ export const api = {
 
   conversations(): Promise<ConversationSummary[]> {
     return request<ConversationSummary[]>("/api/conversations");
+  },
+
+  messages(conversationId: number): Promise<Message[]> {
+    return request<Message[]>(`/api/conversations/${conversationId}/messages`);
   },
 
   createConversation(username: string): Promise<ConversationSummary> {

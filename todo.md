@@ -1,54 +1,45 @@
-# Project status
+﻿# Project status
 
 Updated: 2026-11-12
 
 ## Project
 
-A learning project for a one-to-one realtime messenger. The repository has a
-Next.js client in `client/` and a TypeScript/Express API with SQLite in
-`server/`. Run them in separate terminals from the repository root:
+A one-to-one realtime messenger with a Next.js client and TypeScript/Express
+API backed by SQLite. Run each app from the repository root in its own terminal:
 
 ```powershell
 npm run dev --prefix server
 npm run dev --prefix client
 ```
 
-Open the client at `http://localhost:3000`; the API listens on port 4000. The
-root has no `npm run dev` script.
+Client: `http://localhost:3000`; API and Socket.IO: `http://localhost:4000`.
+There is no root `npm run dev` script.
 
 ## Completed
 
-- **F0 — Scaffolding:** app structure, SQLite schema, health endpoint,
-  environment examples, and run instructions. Added a Node preload workaround
-  for `os.userInfo()` failing under the Windows sandbox.
-- **F1 — Auth:** signup/login with bcrypt and seven-day JWTs, protected
-  `GET /api/me`, client auth pages, localStorage session handling, root
-  redirects, and logout.
-- **F2 — Profile:** validated `PATCH /api/me`, profile editor at `/profile`,
-  shared display-name and deterministic initials-avatar helpers, and a profile
-  link from `/chat`.
-- **F3 — Find people & conversations:** authenticated username-prefix search,
-  get-or-create conversations, activity-ordered summaries, and the chat
-  sidebar/search UI. Empty chats are listed for their creator until messaged.
+- F0: app scaffolding, SQLite schema, health endpoint, environment examples,
+  run instructions, and Windows `os.userInfo()` workaround for `tsx watch`.
+- F1: signup/login, bcrypt password hashes, seven-day JWT auth, and auth UI.
+- F2: validated profile editing, name/avatar helpers, and `/profile`.
+- F3: username search, get-or-create conversations, ordered sidebar, and
+  creator-only visibility for empty conversations.
+- F4: authenticated Socket.IO messaging, persisted messages and protected
+  latest-50 history, live chat UI, sidebar updates, and reconnect recovery.
 
-F2 verification passed: server TypeScript check, client production build,
-trimmed profile updates, persisted profile readback, and over-limit validation.
-F3 verification passed: server TypeScript check, client production build,
-search validation, conversation reuse, and creator/peer visibility before and
-after a message is stored.
-F1's browser click-through was not manually verified because the browser-control
-runtime could not start in that sandbox; this limitation is in `docs/done.md`.
+See `docs/done.md` for verification notes and `docs/architecture.md` for the
+API contract. F4 checks passed: server type-check, client production build,
+two-account live delivery, token rejection, participant authorization, latest
+50 ordering, sidebar visibility, and history persistence after server restart.
+Temporary integration-test accounts were deleted.
 
-## Current work
+## Next
 
-**F4 — Realtime messaging** is next. The active scope is recorded in
-`docs/current-task.md`: authenticated Socket.IO, message persistence/history,
-live delivery, and reconnection recovery. Re-read
-`docs/architecture.md` before implementation; it defines the API contract.
+F5 — Delete account. Scope and acceptance checklist are in
+`docs/current-task.md` and `docs/features.md`.
 
 ## Git
 
 - Remote: `https://github.com/Atalan04/full-chat-app.git`
 - Branch: `main`
-- F2 (`e189d68`) is pushed to `origin/main`.
-- F3 is local work on `main`; `origin/main` was last confirmed at F2.
+- F0–F3 are in the repository history; F4 (`a8f6e4b`) is committed locally.
+- Push F4 only when requested.

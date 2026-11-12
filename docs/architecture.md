@@ -87,6 +87,7 @@ CREATE TABLE IF NOT EXISTS conversations (
   id         INTEGER PRIMARY KEY AUTOINCREMENT,
   user_a     INTEGER NOT NULL REFERENCES users(id),
   user_b     INTEGER NOT NULL REFERENCES users(id),
+  created_by INTEGER NOT NULL REFERENCES users(id),
   created_at TEXT    NOT NULL DEFAULT (datetime('now')),
   UNIQUE (user_a, user_b),
   CHECK (user_a < user_b)   -- canonical order: one row per pair, ever
@@ -198,7 +199,7 @@ useless even before it expires).
 | `GET /api/users?q=` 🔒 | — | `200 UserProfile[]` — literal username prefix match, ≤ 10, excludes self + deleted | 400 empty q |
 | `POST /api/conversations` 🔒 | `{username}` | `200 ConversationSummary` (existing) or `201` (created) | 404 no active user, 409 user deleted, 400 self |
 | `GET /api/conversations` 🔒 | — | `200 ConversationSummary[]`, last activity first; empty chats only for their creator | |
-| `GET /api/conversations/:id/messages` 🔒 | — | `200 Message[]` — last 50, oldest first | 403 not a participant, 404 |
+| `GET /api/conversations/:id/messages` 🔒 | — | `200 Message[]` — last 50, oldest first | 400 invalid id, 403 not a participant, 404 |
 | `GET /api/health` | — | `200 {ok: true}` | |
 
 ### Socket.IO

@@ -1,31 +1,30 @@
 # current-task — The Single Active Task
 
-**Task:** F4 — Realtime messaging
-**Status:** not started
-**Spec:** see `features.md` → F4. Read `architecture.md` API contract before starting.
+**Task:** F5 — Delete account
+**Status:** ready
+**Spec:** see `features.md` → F5 and `architecture.md` API contract.
 
 ## Scope
 
-- Server: JWT-authenticated Socket.IO handshake; personal `user:<id>` rooms;
-  `message:send` validation, storage, acknowledgement, and `message:new`
-  delivery; `GET /api/conversations/:id/messages` with participant checks and
-  the latest 50 messages in chronological order.
-- Client: socket connection after login, disconnection on logout, history and
-  live message rendering, send form, conversation sidebar updates, and history
-  recovery after reconnect.
+- Server: `DELETE /api/me` requiring password confirmation; atomically
+  anonymize the user, clear profile/password fields, set `deleted_at`, then
+  disconnect that user's sockets. Reject messages to a deleted peer.
+- Client: add a password-confirmation danger zone to `/profile`; clear the
+  session and redirect after deletion; show deleted peers as “Deleted User”
+  and disable message sending.
 
 ## Out of scope
 
-Account deletion is F5. Empty states and responsive polish are F6.
+Empty states, connection status, auto-scroll, and responsive polish are F6.
 
 ## Checklist (verify before marking done)
 
-- [ ] Two accounts see new messages arrive in real time.
-- [ ] Message history survives a server restart and is limited to the latest 50.
-- [ ] A bad token cannot connect a socket; non-participants cannot read history.
-- [ ] New conversations appear in the recipient's sidebar after its first message.
+- [ ] Deleted account cannot log in; its existing JWT receives 401.
+- [ ] Peer retains full history, sees “Deleted User”, and cannot message the account.
+- [ ] Database retains no deleted user's original profile or password data.
 - [ ] Server type-check and client build pass.
 
-## On completion
+## F4 completion
 
-Append an entry to `done.md`, load F5 into this file, and commit.
+F4 implementation is complete and verified. See `done.md`; commit the feature
+before starting F5.

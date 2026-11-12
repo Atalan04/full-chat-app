@@ -10,6 +10,18 @@ Append-only. One entry per finished feature, newest at the top. Format:
 
 ---
 
+## 2026-11-12 — F4 Realtime messaging
+- Added JWT-authenticated Socket.IO connections, personal user rooms, validated
+  message persistence and delivery, and participant-only history limited to the
+  latest 50 messages in chronological order.
+- Added the chat message pane, send form, live sidebar ordering, new-conversation
+  refresh, and history recovery after reconnect.
+- Verified server type-check and client production build; two authenticated
+  sockets exchanged messages, invalid JWT and nonparticipant history were
+  rejected, recipient sidebar visibility updated, latest-50 ordering passed,
+  and history survived a server restart. Temporary test accounts were removed.
+- No deviations from the feature contract.
+
 ## 2026-11-12 — F3 Find people & conversations
 - Added authenticated username-prefix search, idempotent get-or-create
   conversations, and activity-ordered conversation summaries.

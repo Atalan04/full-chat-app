@@ -115,6 +115,18 @@ const createConversation = db.prepare(
    VALUES (?, ?, ?)`,
 );
 
+const listRecentMessages = db.prepare(
+  `SELECT id, conversation_id, sender_id, content, created_at
+   FROM (
+     SELECT id, conversation_id, sender_id, content, created_at
+     FROM messages WHERE conversation_id = ? ORDER BY id DESC LIMIT 50
+   ) ORDER BY id ASC`,
+);
+const findConversationMembership = db.prepare(
+  "SELECT 1 AS found FROM conversations WHERE id = ? AND (user_a = ? OR user_b = ?)",
+);
+const findConversationExists = db.prepare("SELECT 1 AS found FROM conversations WHERE id = ?");
+
 export const conversationsRouter = Router();
 
 conversationsRouter.post("/conversations", requireAuth, (request, response) => {
@@ -172,4 +184,27 @@ conversationsRouter.get("/conversations", requireAuth, (request, response) => {
   ) as ConversationSummaryRow[];
 
   return response.json(rows.map(toConversationSummary));
+});
+
+conversationsRouter.get("/conversations/:id/messages", requireAuth, (request, response) => {
+  if (request.userId === undefined) {
+    return response.status(401).json({ error: "Not authenticated." });
+  }
+
+  const rawConversationId = Array.isArray(request.params.id) ? request.params.id[0] : request.params.id;
+  if (!/^[1-9]\d*$/.test(rawConversationId)) {
+    return response.status(400).json({ error: "The conversation id is invalid." });
+  }
+  const conversationId = Number(rawConversationId);
+  if (!Number.isSafeInteger(conversationId)) {
+    return response.status(400).json({ error: "The conversation id is invalid." });
+  }
+  if (!findConversationExists.get(conversationId)) {
+    return response.status(404).json({ error: "Conversation not found." });
+  }
+  if (!findConversationMembership.get(conversationId, request.userId, request.userId)) {
+    return response.status(403).json({ error: "You are not a participant in this conversation." });
+  }
+
+  return response.json(listRecentMessages.all(conversationId));
 });
