@@ -26,4 +26,4 @@ blocking, rate limiting, group chats, and httpOnly-cookie auth remain later work
 
 ## F5 completion
 
-F5 is complete and verified in commit `981ec50`; F6 is ready.
+F5 is complete and verified in commit `87838b3`; F6 is ready.

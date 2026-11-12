@@ -45,4 +45,4 @@ F6 — Polish. Scope and acceptance checklist are in
 - Remote: `https://github.com/Atalan04/full-chat-app.git`
 - Branch: `main`
 - F0–F4 are pushed to `origin/main`; F4 is `6ac0a61`.
-- F5 (`981ec50`) is committed locally and pending the requested push.
+- F5 (`87838b3`) is pushed to `origin/main`.
