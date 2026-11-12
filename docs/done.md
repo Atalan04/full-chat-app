@@ -10,6 +10,16 @@ Append-only. One entry per finished feature, newest at the top. Format:
 
 ---
 
+## 2026-11-12 — F3 Find people & conversations
+- Added authenticated username-prefix search, idempotent get-or-create
+  conversations, and activity-ordered conversation summaries.
+- Added the chat sidebar/search experience and an empty selected-conversation
+  pane; empty conversations are listed only for their creator until messaged.
+- Verified server type-check, client production build, search validation,
+  conversation reuse, creator/peer visibility, and visibility after a message.
+- Existing databases gain `conversations.created_by` on startup; legacy rows
+  are attributed to `user_a` because their creator was not previously stored.
+
 ## 2026-11-11 — F2 Profile
 - Added validated profile editing through `PATCH /api/me`, a signed-in `/profile`
   page, and shared display-name and deterministic initials-avatar helpers.

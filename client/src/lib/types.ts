@@ -12,6 +12,20 @@ export interface AuthResponse {
   user: UserProfile;
 }
 
+export interface Message {
+  id: number;
+  conversation_id: number;
+  sender_id: number;
+  content: string;
+  created_at: string;
+}
+
+export interface ConversationSummary {
+  id: number;
+  peer: UserProfile;
+  last_message: Message | null;
+}
+
 export interface ApiErrorResponse {
   error: string;
 }

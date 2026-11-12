@@ -121,6 +121,10 @@ Schema reasoning:
   `YYYY-MM-DD HH:MM:SS`, which sorts correctly as a string.
 - **`idx_messages_conversation`** serves the hot query: last 50 messages of a
   conversation.
+- **`created_by`** records who opened a conversation. An empty conversation is
+  listed only for its creator; once it has a message, both participants see it.
+  Existing databases gain this column on startup, with old rows attributed to
+  `user_a` because their original creator was not recorded.
 
 ## API contract
 
@@ -174,6 +178,11 @@ Display rules (client-side, used everywhere a user appears):
 
 ### REST endpoints
 
+User search is a literal, case-insensitive username-prefix match. Percent and
+underscore characters in the query are treated as text, not SQL wildcards.
+Conversation summaries include empty chats for their creator; the other
+participant sees a chat after its first message is stored.
+
 Base URL `http://localhost:4000`, JSON bodies. Errors: proper HTTP status +
 `{ "error": string }`. 🔒 = requires `Authorization: Bearer <token>`; the
 middleware rejects valid-but-deleted accounts too (a deleted user's JWT is
@@ -186,9 +195,9 @@ useless even before it expires).
 | `GET /api/me` 🔒 | — | `200 UserProfile` | |
 | `PATCH /api/me` 🔒 | any of `{first_name, last_name, bio}` | `200 UserProfile` | 400 validation |
 | `DELETE /api/me` 🔒 | `{password}` | `204` | 401 wrong password |
-| `GET /api/users?q=` 🔒 | — | `200 UserProfile[]` — username prefix match, ≤ 10, excludes self + deleted | 400 empty q |
-| `POST /api/conversations` 🔒 | `{username}` | `200 ConversationSummary` (existing) or `201` (created) | 404 no such user, 409 user deleted, 400 self |
-| `GET /api/conversations` 🔒 | — | `200 ConversationSummary[]`, last activity first | |
+| `GET /api/users?q=` 🔒 | — | `200 UserProfile[]` — literal username prefix match, ≤ 10, excludes self + deleted | 400 empty q |
+| `POST /api/conversations` 🔒 | `{username}` | `200 ConversationSummary` (existing) or `201` (created) | 404 no active user, 409 user deleted, 400 self |
+| `GET /api/conversations` 🔒 | — | `200 ConversationSummary[]`, last activity first; empty chats only for their creator | |
 | `GET /api/conversations/:id/messages` 🔒 | — | `200 Message[]` — last 50, oldest first | 403 not a participant, 404 |
 | `GET /api/health` | — | `200 {ok: true}` | |
 

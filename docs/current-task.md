@@ -1,31 +1,31 @@
 # current-task — The Single Active Task
 
-**Task:** F3 — Find people & conversations
+**Task:** F4 — Realtime messaging
 **Status:** not started
-**Spec:** see `features.md` → F3. Read `architecture.md` API contract before starting.
+**Spec:** see `features.md` → F4. Read `architecture.md` API contract before starting.
 
 ## Scope
 
-- Server: `GET /api/users?q=` (username prefix search, maximum 10, excluding
-  the caller and deleted users), `POST /api/conversations` (get or create by
-  username), and `GET /api/conversations` (peer profile and last message, newest
-  activity first).
-- Client: `/chat` layout with a user search box, results that open a
-  conversation, a conversation list with peer avatar/name and last-message
-  preview, and an empty selected-conversation pane for F4.
+- Server: JWT-authenticated Socket.IO handshake; personal `user:<id>` rooms;
+  `message:send` validation, storage, acknowledgement, and `message:new`
+  delivery; `GET /api/conversations/:id/messages` with participant checks and
+  the latest 50 messages in chronological order.
+- Client: socket connection after login, disconnection on logout, history and
+  live message rendering, send form, conversation sidebar updates, and history
+  recovery after reconnect.
 
 ## Out of scope
 
-Realtime messaging and message history are F4. Account deletion is F5.
+Account deletion is F5. Empty states and responsive polish are F6.
 
 ## Checklist (verify before marking done)
 
-- [ ] Searching for a username and picking a result opens a conversation.
-- [ ] Opening the same person twice reuses one conversation.
-- [ ] The sidebar lists the conversation.
-- [ ] A second account sees it once a message exists (F4 completes this).
+- [ ] Two accounts see new messages arrive in real time.
+- [ ] Message history survives a server restart and is limited to the latest 50.
+- [ ] A bad token cannot connect a socket; non-participants cannot read history.
+- [ ] New conversations appear in the recipient's sidebar after its first message.
 - [ ] Server type-check and client build pass.
 
 ## On completion
 
-Append an entry to `done.md`, load F4 into this file, and commit.
+Append an entry to `done.md`, load F5 into this file, and commit.

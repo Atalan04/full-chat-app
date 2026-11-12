@@ -16,6 +16,14 @@ const findUserProfile = db.prepare(
    FROM users WHERE id = ? AND deleted_at IS NULL`,
 );
 
+const searchActiveUsers = db.prepare(
+  `SELECT id, username, first_name, last_name, bio, deleted_at
+   FROM users
+   WHERE id <> ? AND deleted_at IS NULL AND username LIKE ? ESCAPE '\\'
+   ORDER BY username COLLATE NOCASE
+   LIMIT 10`,
+);
+
 function getUserProfile(userId: number): UserProfileRow | undefined {
   return findUserProfile.get(userId) as UserProfileRow | undefined;
 }
@@ -103,4 +111,27 @@ usersRouter.patch("/me", requireAuth, (request, response) => {
     bio: updatedUser.bio,
     deleted: updatedUser.deleted_at !== null,
   });
+});
+
+usersRouter.get("/users", requireAuth, (request, response) => {
+  if (request.userId === undefined) {
+    return response.status(401).json({ error: "Not authenticated." });
+  }
+
+  const query = typeof request.query.q === "string" ? request.query.q.trim() : "";
+  if (!query) {
+    return response.status(400).json({ error: "Enter a username to search." });
+  }
+
+  const escapedQuery = query.replace(/[\\%_]/g, "\\$&");
+  const rows = searchActiveUsers.all(request.userId, `${escapedQuery}%`) as UserProfileRow[];
+
+  return response.json(rows.map((user) => ({
+    id: user.id,
+    username: user.username,
+    first_name: user.first_name,
+    last_name: user.last_name,
+    bio: user.bio,
+    deleted: user.deleted_at !== null,
+  })));
 });

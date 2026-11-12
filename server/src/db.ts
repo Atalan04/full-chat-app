@@ -23,6 +23,7 @@ db.exec(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_a INTEGER NOT NULL REFERENCES users(id),
     user_b INTEGER NOT NULL REFERENCES users(id),
+    created_by INTEGER NOT NULL REFERENCES users(id),
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     UNIQUE (user_a, user_b),
     CHECK (user_a < user_b)
@@ -40,3 +41,12 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_conversations_a ON conversations(user_a);
   CREATE INDEX IF NOT EXISTS idx_conversations_b ON conversations(user_b);
 `);
+
+const conversationColumns = db
+  .prepare("PRAGMA table_info(conversations)")
+  .all() as Array<{ name: string }>;
+
+if (!conversationColumns.some((column) => column.name === "created_by")) {
+  db.exec("ALTER TABLE conversations ADD COLUMN created_by INTEGER REFERENCES users(id)");
+  db.exec("UPDATE conversations SET created_by = user_a WHERE created_by IS NULL");
+}

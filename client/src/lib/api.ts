@@ -1,5 +1,5 @@
 import { getToken } from "@/lib/auth";
-import type { ApiErrorResponse, AuthResponse, UserProfile } from "@/lib/types";
+import type { ApiErrorResponse, AuthResponse, ConversationSummary, UserProfile } from "@/lib/types";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000").replace(/\/$/, "");
 
@@ -62,6 +62,21 @@ export const api = {
     return request<UserProfile>("/api/me", {
       method: "PATCH",
       body: JSON.stringify(profile),
+    });
+  },
+
+  searchUsers(query: string): Promise<UserProfile[]> {
+    return request<UserProfile[]>(`/api/users?q=${encodeURIComponent(query)}`);
+  },
+
+  conversations(): Promise<ConversationSummary[]> {
+    return request<ConversationSummary[]>("/api/conversations");
+  },
+
+  createConversation(username: string): Promise<ConversationSummary> {
+    return request<ConversationSummary>("/api/conversations", {
+      method: "POST",
+      body: JSON.stringify({ username }),
     });
   },
 };
